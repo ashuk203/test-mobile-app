@@ -33,6 +33,6 @@ export default class Example extends Component {
       },
     ];
 
-    return <Dropdown label="Favorite Fruit" data={data} itemCount={5} />;
+    return <Dropdown label="Favorite Fruit" data={data} itemCount={4} />;
   }
 }

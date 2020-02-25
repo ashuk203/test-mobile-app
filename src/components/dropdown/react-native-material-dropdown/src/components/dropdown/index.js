@@ -20,7 +20,7 @@ import styles from './styles';
 
 export default class Dropdown extends PureComponent {
   static defaultProps = {
-    hitSlop: {top: 6, right: 4, bottom: 6, left: 4},
+    hitSlop: {top: 0, right: 0, bottom: 0, left: 0},
 
     disabled: false,
 
@@ -33,6 +33,7 @@ export default class Dropdown extends PureComponent {
 
     absoluteRTLLayout: false,
 
+    /* Controls where modal pops up */
     dropdownOffset: {
       top: 32,
       left: 0,
@@ -138,7 +139,6 @@ export default class Dropdown extends PureComponent {
 
     this.jumpToItem = this.jumpToItem.bind(this);
     this.pickItem = this.pickItem.bind(this);
-    // this.displayItem = this.displayItem.bind(this);
     this.onPress = this.onPress.bind(this);
     this.onClose = this.onClose.bind(this);
     this.onSelect = this.onSelect.bind(this);
@@ -368,7 +368,7 @@ export default class Dropdown extends PureComponent {
   visibleItemCount() {
     let {data, itemCount} = this.props;
 
-    return Math.min(data.length, itemCount);
+    return Math.min(data.length, itemCount) + 1;
   }
 
   tailItemCount() {
@@ -391,31 +391,13 @@ export default class Dropdown extends PureComponent {
     let visibleItemCount = this.visibleItemCount();
 
     if (itemCount > visibleItemCount) {
-      if (null == dropdownPosition) {
-        switch (selected) {
-          case -1:
-            break;
+      let index = selected - dropdownPosition;
 
-          case 0:
-          case 1:
-            break;
+      index = Math.max(0, index);
+      index = Math.min(index, itemCount - visibleItemCount + 1);
 
-          default:
-            if (selected >= itemCount - tailItemCount) {
-              offset = itemSize * (itemCount - visibleItemCount);
-            } else {
-              offset = itemSize * (selected - 1);
-            }
-        }
-      } else {
-        let index = selected - dropdownPosition;
-
-        index = Math.max(0, index);
-        index = Math.min(index, itemCount - visibleItemCount + 1);
-
-        if (selected != -1) {
-          offset = itemSize * index;
-        }
+      if (selected != -1) {
+        offset = itemSize * index;
       }
     }
     return offset;
@@ -470,6 +452,7 @@ export default class Dropdown extends PureComponent {
         labelHeight={dropdownOffset.top - Platform.select({ios: 1, android: 2})}
         {...props}
         value={text}
+        placeholder="Choose your favorite fruit"
         onChangeText={this.jumpToItem}
         onSubmitEditing={this.pickItem}
         renderAccessory={renderAccessory}
@@ -607,26 +590,7 @@ export default class Dropdown extends PureComponent {
     let height = 2 * itemPadding + itemSize * visibleItemCount;
     let translateY = -itemPadding;
 
-    if (null == dropdownPosition) {
-      switch (selected) {
-        case -1:
-          translateY -= 1 === itemCount ? 0 : itemSize;
-          break;
-
-        case 0:
-          break;
-
-        default:
-          if (selected >= itemCount - tailItemCount) {
-            translateY -=
-              itemSize * (visibleItemCount - (itemCount - selected));
-          } else {
-            translateY -= itemSize;
-          }
-      }
-    } else {
-      translateY -= itemSize * dropdownPosition;
-    }
+    translateY -= itemSize * dropdownPosition;
 
     let overlayStyle = {opacity};
 
@@ -647,13 +611,6 @@ export default class Dropdown extends PureComponent {
       nativeID,
       accessible,
       accessibilityLabel,
-    };
-
-    let baseProps = {
-      onClose: this.onClose,
-      resetScrollOffset: this.resetScrollOffset,
-      jumpToItem: this.jumpToItem,
-      state: this.state,
     };
 
     return (
@@ -684,7 +641,7 @@ export default class Dropdown extends PureComponent {
                 style={styles.scroll}
                 renderItem={this.renderItem}
                 keyExtractor={this.keyExtractor}
-                scrollEnabled={visibleItemCount < itemCount}
+                scrollEnabled={visibleItemCount - 1 < itemCount}
                 contentContainerStyle={styles.scrollContainer}
               />
             </View>
