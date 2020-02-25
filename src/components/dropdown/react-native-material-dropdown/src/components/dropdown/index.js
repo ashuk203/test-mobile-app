@@ -18,15 +18,6 @@ import {TextField} from 'react-native-material-textfield';
 import DropdownItem from '../item';
 import styles from './styles';
 
-function searchItems(data, text) {
-  for (let i = 0; i < data.length; i++) {
-    if (data[i].value.indexOf(text) > -1) {
-      return i;
-    }
-  }
-  return -1;
-}
-
 export default class Dropdown extends PureComponent {
   static defaultProps = {
     hitSlop: {top: 6, right: 4, bottom: 6, left: 4},
@@ -34,7 +25,6 @@ export default class Dropdown extends PureComponent {
     disabled: false,
 
     data: [],
-    text: 'Hello',
 
     valueExtractor: ({value} = {}, index) => value,
     labelExtractor: ({label} = {}, index) => label,
@@ -146,6 +136,8 @@ export default class Dropdown extends PureComponent {
     super(props);
 
     this.jumpToItem = this.jumpToItem.bind(this);
+    this.pickItem = this.pickItem.bind(this);
+    // this.displayItem = this.displayItem.bind(this);
     this.onPress = this.onPress.bind(this);
     this.onClose = this.onClose.bind(this);
     this.onSelect = this.onSelect.bind(this);
@@ -232,6 +224,11 @@ export default class Dropdown extends PureComponent {
 
       let delay = Math.max(0, 0 - animationDuration - (Date.now() - timestamp));
       let selected = this.selectedIndex();
+      let valueSelected = '';
+
+      if (selected > -1) {
+        valueSelected = this.selectedItem().value;
+      }
 
       let leftInset;
       let left = x + dropdownOffset.left - maxMargin;
@@ -263,6 +260,7 @@ export default class Dropdown extends PureComponent {
         leftInset,
         rightInset,
         selected,
+        text: valueSelected,
       });
 
       setTimeout(() => {
@@ -312,6 +310,7 @@ export default class Dropdown extends PureComponent {
     let {data, valueExtractor, onChangeText, animationDuration} = this.props;
 
     let value = valueExtractor(data[index], index);
+    this.setState({text: value});
 
     if ('function' === typeof onChangeText) {
       onChangeText(value, index, data);
@@ -328,12 +327,6 @@ export default class Dropdown extends PureComponent {
     }
   }
 
-  /*value() {
-    let {value} = this.state;
-
-    return value;
-  }*/
-
   selectedIndex() {
     let {value} = this.state;
     let {data, valueExtractor} = this.props;
@@ -347,6 +340,15 @@ export default class Dropdown extends PureComponent {
     let {data} = this.props;
 
     return data[this.selectedIndex()];
+  }
+
+  searchItems(data, text) {
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].value.indexOf(text) > -1) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   isFocused() {
@@ -369,8 +371,13 @@ export default class Dropdown extends PureComponent {
     return Math.max(this.visibleItemCount() - 2, 0);
   }
 
-  resetScrollOffset() {
-    let {selected} = this.state;
+  jumpToOffset(offset) {
+    if (this.scroll) {
+      this.scroll.scrollToOffset({offset, animated: false});
+    }
+  }
+
+  computeOffset(selected) {
     let {data, dropdownPosition, valueExtractor} = this.props;
 
     let offset = 0;
@@ -407,10 +414,13 @@ export default class Dropdown extends PureComponent {
         }
       }
     }
+    return offset;
+  }
 
-    if (this.scroll) {
-      this.scroll.scrollToOffset({offset, animated: false});
-    }
+  resetScrollOffset() {
+    let {selected} = this.state;
+    let offset = this.computeOffset(selected);
+    this.jumpToOffset(offset);
   }
 
   updateRef(name, ref) {
@@ -424,7 +434,7 @@ export default class Dropdown extends PureComponent {
   }
 
   renderBase(props) {
-    let {value} = this.state;
+    let {value, text, selected} = this.state;
     let {
       data,
       renderBase,
@@ -455,11 +465,9 @@ export default class Dropdown extends PureComponent {
         label=""
         labelHeight={dropdownOffset.top - Platform.select({ios: 1, android: 2})}
         {...props}
-        value={this.state.text}
+        value={text}
         onChangeText={this.jumpToItem}
-        onSubmitEditing={() => {
-          alert('whoah');
-        }}
+        onSubmitEditing={this.pickItem}
         renderAccessory={renderAccessory}
       />
     );
@@ -467,75 +475,23 @@ export default class Dropdown extends PureComponent {
 
   jumpToItem(text) {
     this.setState({text});
-    let {data, dropdownPosition, valueExtractor} = this.props;
-    let selected = searchItems(data, text);
+    let {data} = this.props;
+    let selected = this.searchItems(data, text);
 
-    let offset = 0;
-    let itemCount = data.length;
-    let itemSize = this.itemSize();
-    let tailItemCount = this.tailItemCount();
-    let visibleItemCount = this.visibleItemCount();
-
-    if (itemCount > visibleItemCount) {
-      if (null == dropdownPosition) {
-        switch (selected) {
-          case -1:
-            break;
-
-          case 0:
-          case 1:
-            break;
-
-          default:
-            if (selected >= itemCount - tailItemCount) {
-              offset = itemSize * (itemCount - visibleItemCount);
-            } else {
-              offset = itemSize * (selected - 1);
-            }
-        }
-      } else {
-        let index = selected - dropdownPosition;
-
-        index = Math.max(0, index);
-        index = Math.min(index, itemCount - visibleItemCount + 1);
-
-        if (selected != -1) {
-          offset = itemSize * index;
-        }
-      }
-    }
-
-    if (this.scroll) {
-      this.scroll.scrollToOffset({offset, animated: false});
-    }
+    let offset = this.computeOffset(selected);
+    this.jumpToOffset(offset);
   }
 
-  /*
-  pickItem(text) {
-    let search_res = this.jumpToItem(text);
-    // let search_res = {id: -1, val: ''};
-
-    if (search_res.id > -1) {
-      // this.setState({selected: search_res})
-      this.setState({text: search_res.val});
-      this.onClose(search_res.val);
-    } else {
-      this.setState({text: ''});
-    }
-    this.resetScrollOffset(matched_data_id);
-  }
-
-  jumpToItem(text) {
+  pickItem() {
     let {data, valueExtractor} = this.props;
-    let search_res = this.jumpToItem(text);
+    let selected = this.searchItems(data, this.state.text);
 
-    console.log("I'm fucking in " + data);
-    // let search_res = {id: -1, val: ''};
-
-    this.resetScrollOffset(search_res.id);
-    this.setState({text: text});
+    if (selected > -1) {
+      this.onSelect(selected);
+    } else {
+      this.setState({text: '', selected});
+    }
   }
-  */
 
   renderAccessory() {
     let {baseColor: backgroundColor} = this.props;
@@ -704,13 +660,6 @@ export default class Dropdown extends PureComponent {
         <TouchableWithoutFeedback {...touchableProps}>
           <View pointerEvents="box-only">{this.renderBase(props)}</View>
         </TouchableWithoutFeedback>
-
-        <Text style={{padding: 10, fontSize: 42}}>
-          {this.state.text
-            .split(' ')
-            .map(word => word && '🍕')
-            .join('-')}
-        </Text>
 
         <Modal
           visible={modal}
