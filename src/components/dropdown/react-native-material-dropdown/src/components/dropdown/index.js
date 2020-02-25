@@ -344,6 +344,9 @@ export default class Dropdown extends PureComponent {
   }
 
   searchItems(data, text) {
+    if (text.length == 0) {
+      return -1;
+    }
     for (let i = 0; i < data.length; i++) {
       if (data[i].value.indexOf(text) > -1) {
         return i;
