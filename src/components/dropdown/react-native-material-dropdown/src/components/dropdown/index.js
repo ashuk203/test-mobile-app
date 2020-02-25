@@ -18,6 +18,15 @@ import {TextField} from 'react-native-material-textfield';
 import DropdownItem from '../item';
 import styles from './styles';
 
+function searchItems(data, text) {
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].value.indexOf(text) > -1) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 export default class Dropdown extends PureComponent {
   static defaultProps = {
     hitSlop: {top: 6, right: 4, bottom: 6, left: 4},
@@ -136,7 +145,7 @@ export default class Dropdown extends PureComponent {
   constructor(props) {
     super(props);
 
-    this.searchItems = this.searchItems.bind(this);
+    this.jumpToItem = this.jumpToItem.bind(this);
     this.onPress = this.onPress.bind(this);
     this.onClose = this.onClose.bind(this);
     this.onSelect = this.onSelect.bind(this);
@@ -400,8 +409,6 @@ export default class Dropdown extends PureComponent {
     }
 
     if (this.scroll) {
-      // console.log('Ayy selected ' + selected);
-      // console.log('Ayy offset ' + offset);
       this.scroll.scrollToOffset({offset, animated: false});
     }
   }
@@ -449,7 +456,7 @@ export default class Dropdown extends PureComponent {
         labelHeight={dropdownOffset.top - Platform.select({ios: 1, android: 2})}
         {...props}
         value={this.state.text}
-        onChangeText={this.searchItems}
+        onChangeText={this.jumpToItem}
         onSubmitEditing={() => {
           alert('whoah');
         }}
@@ -458,10 +465,10 @@ export default class Dropdown extends PureComponent {
     );
   }
 
-  searchItems(text) {
+  jumpToItem(text) {
     this.setState({text});
-    let selected = text.length;
     let {data, dropdownPosition, valueExtractor} = this.props;
+    let selected = searchItems(data, text);
 
     let offset = 0;
     let itemCount = data.length;
@@ -505,7 +512,7 @@ export default class Dropdown extends PureComponent {
 
   /*
   pickItem(text) {
-    let search_res = this.searchItems(text);
+    let search_res = this.jumpToItem(text);
     // let search_res = {id: -1, val: ''};
 
     if (search_res.id > -1) {
@@ -520,7 +527,7 @@ export default class Dropdown extends PureComponent {
 
   jumpToItem(text) {
     let {data, valueExtractor} = this.props;
-    let search_res = this.searchItems(text);
+    let search_res = this.jumpToItem(text);
 
     console.log("I'm fucking in " + data);
     // let search_res = {id: -1, val: ''};
@@ -685,7 +692,7 @@ export default class Dropdown extends PureComponent {
     let baseProps = {
       onClose: this.onClose,
       resetScrollOffset: this.resetScrollOffset,
-      searchItems: this.searchItems,
+      jumpToItem: this.jumpToItem,
       state: this.state,
     };
 
