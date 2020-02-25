@@ -25,6 +25,7 @@ export default class Dropdown extends PureComponent {
     disabled: false,
 
     data: [],
+    dropdownPosition: 0,
 
     valueExtractor: ({value} = {}, index) => value,
     labelExtractor: ({label} = {}, index) => label,
