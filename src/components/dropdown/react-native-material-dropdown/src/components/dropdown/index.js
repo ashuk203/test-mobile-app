@@ -25,6 +25,7 @@ export default class Dropdown extends PureComponent {
     disabled: false,
 
     data: [],
+    text: 'Hello',
 
     valueExtractor: ({value} = {}, index) => value,
     labelExtractor: ({label} = {}, index) => label,
@@ -442,29 +443,24 @@ export default class Dropdown extends PureComponent {
 
     title = null == title || 'string' === typeof title ? title : String(title);
 
-    //  console.log(props);
-
     return (
       <TextInput
         label=""
         labelHeight={dropdownOffset.top - Platform.select({ios: 1, android: 2})}
         {...props}
-        selected={this.state.selected}
         value={this.state.text}
         onChangeText={this.searchItems}
-        onSubmitEditing={undefined}
+        onSubmitEditing={() => {
+          alert('whoah');
+        }}
         renderAccessory={renderAccessory}
       />
     );
   }
 
   searchItems(text) {
-    let {data, valueExtractor} = this.props;
-
-    console.log(data);
-
+    this.setState({text});
     let selected = text.length;
-
     let {data, dropdownPosition, valueExtractor} = this.props;
 
     let offset = 0;
