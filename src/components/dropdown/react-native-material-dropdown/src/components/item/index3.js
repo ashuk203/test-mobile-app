@@ -8,7 +8,6 @@ export default class DropdownItem extends PureComponent {
   static defaultProps = {
     color: 'transparent',
     disabledColor: 'transparent',
-    rippleContainerBorderRadius: 0,
     shadeBorderRadius: 0,
   };
 
