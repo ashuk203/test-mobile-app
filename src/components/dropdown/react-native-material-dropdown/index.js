@@ -1,3 +1,3 @@
-import Dropdown from './src/components/dropdown';
+import Dropdown from './dropdown';
 
 export default Dropdown;

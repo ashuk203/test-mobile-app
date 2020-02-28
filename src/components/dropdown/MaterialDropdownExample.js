@@ -40,31 +40,15 @@ export default class Example extends Component {
         <Text>
           Example text above. You can place additional content up here
         </Text>
-        <Text>
-          Example text above. You can place additional content up here
-        </Text>
-        <Text>
-          Example text above. You can place additional content up here
-        </Text>
-        <Text>
-          Example text above. You can place additional content up here
-        </Text>
-        <Text>
-          Example text above. You can place additional content up here
-        </Text>
-        <Text>
-          Example text above. You can place additional content up here
-        </Text>
         <Dropdown
           data={data}
           itemCount={4}
+          itemTextStyle={{color: 'grey'}}
           inputTextStyle={NightTheme.Text.style}
           containerStyle={NightTheme.SearchBar.inputContainerStyle}
           pickerStyle={NightTheme.ListItem.containerStyle}
-          itemColor={'grey'}
-          textColor={'grey'}
         />
-        <Text>Example text below</Text>
+        <Text>Example text below.</Text>
       </View>
     );
   }

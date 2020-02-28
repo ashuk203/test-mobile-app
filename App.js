@@ -1,2 +1,2 @@
-import App from './src/components/dropdown/MaterialDropdown';
+import App from './src/components/dropdown/MaterialDropdownExample';
 export default App;

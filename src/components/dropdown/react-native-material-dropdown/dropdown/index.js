@@ -521,16 +521,6 @@ export default class Dropdown extends PureComponent {
 
     let title = null == label ? value : label;
 
-    let color = disabled
-      ? disabledItemColor
-      : ~selected
-      ? index === selected
-        ? selectedItemColor
-        : itemColor
-      : selectedItemColor;
-
-    let textStyle = {color, fontSize};
-
     props.style = [
       style,
       {
@@ -542,7 +532,7 @@ export default class Dropdown extends PureComponent {
 
     return (
       <DropdownItem index={index} {...props}>
-        <Text style={[styles.item, itemTextStyle, textStyle]} numberOfLines={1}>
+        <Text style={itemTextStyle} numberOfLines={1}>
           {title}
         </Text>
       </DropdownItem>
