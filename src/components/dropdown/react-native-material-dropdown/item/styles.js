@@ -1,9 +1,10 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   container: {
     paddingVertical: 8,
     borderRadius: 0,
-    justifyContent: 'center',
-  },
+    justifyContent: "center",
+    backgroundColor: "transparent"
+  }
 });

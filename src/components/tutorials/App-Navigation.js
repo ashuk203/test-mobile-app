@@ -1,12 +1,13 @@
 import React from 'react';
-import { Image, View, Text, Button } from 'react-native';
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
+import {Image, View, Text, Button} from 'react-native';
+import {createAppContainer} from 'react-navigation';
+import {createStackNavigator} from 'react-navigation-stack';
+
+const LOGIN_SCREEN_KEY = 'Login';
 
 class HomeScreen extends React.Component {
-
-  static navigationOptions = ({ navigation }) => {
-		return {
+  static navigationOptions = ({navigation}) => {
+    return {
       headerLeft: () => (
         <Button
           onPress={() => navigation.navigate('MyModal')}
@@ -14,19 +15,19 @@ class HomeScreen extends React.Component {
           color="#fff"
         />
       ),
-			headerTitle: () => <LogoTitle />,
-		  headerRight: () => (
-		    <Button
-		      onPress={navigation.getParam('increaseCount')}
-		      title="+1"
-		      color="#fff"
-		    />
-		  )
-		};
+      headerTitle: () => <LogoTitle />,
+      headerRight: () => (
+        <Button
+          onPress={navigation.getParam('increaseCount')}
+          title="+1"
+          color="#fff"
+        />
+      ),
+    };
   };
 
   componentDidMount() {
-    this.props.navigation.setParams({ increaseCount: this._increaseCount });
+    this.props.navigation.setParams({increaseCount: this._increaseCount});
   }
 
   state = {
@@ -34,13 +35,13 @@ class HomeScreen extends React.Component {
   };
 
   _increaseCount = () => {
-    this.setState({ count: this.state.count + 1 });
+    this.setState({count: this.state.count + 1});
   };
 
   render() {
-		const { navigation } = this.props;
+    const {navigation} = this.props;
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
         <Text>Home Screen {this.state.count} </Text>
         <Text>
           otherParam:
@@ -63,10 +64,7 @@ class HomeScreen extends React.Component {
 class LogoTitle extends React.Component {
   render() {
     return (
-      <Image
-        source={require('./spiro.png')}
-        style={{ width: 30, height: 30 }}
-      />
+      <Image source={require('./spiro.png')} style={{width: 30, height: 30}} />
     );
   }
 }
@@ -74,8 +72,8 @@ class LogoTitle extends React.Component {
 class ModalScreen extends React.Component {
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ fontSize: 30 }}>This is a modal!</Text>
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <Text style={{fontSize: 30}}>This is a modal!</Text>
         <Button
           onPress={() => this.props.navigation.goBack()}
           title="Dismiss"
@@ -86,21 +84,20 @@ class ModalScreen extends React.Component {
 }
 
 class DetailsScreen extends React.Component {
-
-  static navigationOptions = ({ navigation, navigationOptions }) => {
+  static navigationOptions = ({navigation, navigationOptions}) => {
     return {
       title: navigation.getParam('otherParam', 'A Nested Details Screen'),
       headerStyle: {
         backgroundColor: navigationOptions.headerTintColor,
       },
-      headerTintColor: navigationOptions.headerStyle.backgroundColor
+      headerTintColor: navigationOptions.headerStyle.backgroundColor,
     };
   };
 
   render() {
-    const { navigation } = this.props;
+    const {navigation} = this.props;
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
         <Text>Details Screen</Text>
         <Text>
           itemId: {JSON.stringify(navigation.getParam('itemId', 'NO-ID'))}
@@ -121,7 +118,7 @@ class DetailsScreen extends React.Component {
           title="Home is about to change"
           onPress={() =>
             navigation.push('Home', {
-							otherParam: 'Welcome back... HOME!!'
+              otherParam: 'Welcome back... HOME!!',
             })
           }
         />
@@ -131,42 +128,43 @@ class DetailsScreen extends React.Component {
 }
 
 const AppNavigator = createStackNavigator(
-  /*Home: {
-    screen: HomeScreen,
-  },*/
   {
-		Home: HomeScreen,
-		Details: DetailsScreen
+    Home: {
+      screen: HomeScreen,
+    },
   },
   {
-		initialRouteName: 'Home',
-		defaultNavigationOptions: {
-		  headerStyle: {
-		    backgroundColor: '#f4511e',
-		  },
-		  headerTintColor: '#fff',
-		  headerTitleStyle: {
-		    fontWeight: 'bold',
-		  }
-		}
-  }
+    // Home: HomeScreen,
+    Details: DetailsScreen,
+  },
+  {
+    initialRouteName: 'Home',
+    defaultNavigationOptions: {
+      headerStyle: {
+        backgroundColor: '#f4511e',
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        fontWeight: 'bold',
+      },
+    },
+  },
 );
 
 const RootStack = createStackNavigator(
   {
     Main: AppNavigator,
-    MyModal: ModalScreen
+    MyModal: ModalScreen,
   },
   {
     mode: 'modal',
     headerMode: 'none',
-  }
+  },
 );
 
-
 // export default createAppContainer(AppNavigator);
-// const AppContainer = createAppContainer(AppNavigator);
-const AppContainer = createAppContainer(RootStack);
+const AppContainer = createAppContainer(AppNavigator);
+// const AppContainer = createAppContainer(RootStack);
 
 export default class App extends React.Component {
   render() {

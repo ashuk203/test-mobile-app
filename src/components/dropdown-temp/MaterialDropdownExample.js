@@ -45,7 +45,7 @@ export default class Example extends Component {
           itemCount={4}
           itemTextStyle={{color: 'grey'}}
           inputTextStyle={NightTheme.Text.style}
-          containerStyle={NightTheme.SearchBar.inputContainerStyle}
+          searchContainerStyle={NightTheme.SearchBar.inputContainerStyle}
           pickerStyle={NightTheme.ListItem.containerStyle}
         />
         <Text>Example text below.</Text>

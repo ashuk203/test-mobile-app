@@ -10,10 +10,14 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-community/netinfo": "^5.7.0",
     "react": "16.9.0",
     "react-native": "0.61.5",
+    "react-native-background-fetch": "^2.8.0",
+    "react-native-background-task": "^0.2.1",
     "react-native-camera": "^3.18.0",
     "react-native-elements": "^1.2.7",
+    "react-native-job-queue": "^0.1.0",
     "react-native-material-buttons": "^0.6.0",
     "react-native-material-textfield": "^0.16.1",
     "react-native-qrcode": "github:wanxsb/react-native-qrcode#1a08f9cedcb747fd230be717fe815c686e4427cb",

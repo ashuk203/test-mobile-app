@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import {TextField} from 'react-native-material-textfield';
 
-import DropdownItem from '../item';
+import DropdownItem from './item';
 import styles from './styles';
 
 export default class Dropdown extends PureComponent {
@@ -125,7 +125,7 @@ export default class Dropdown extends PureComponent {
     renderBase: PropTypes.func,
     renderAccessory: PropTypes.func,
 
-    containerStyle: (ViewPropTypes || View.propTypes).style,
+    searchContainerStyle: (ViewPropTypes || View.propTypes).style,
     overlayStyle: (ViewPropTypes || View.propTypes).style,
     pickerStyle: (ViewPropTypes || View.propTypes).style,
 
@@ -332,6 +332,12 @@ export default class Dropdown extends PureComponent {
     if ('function' === typeof onLayout) {
       onLayout(event);
     }
+  }
+
+  value() {
+    let {value} = this.state;
+
+    return value;
   }
 
   selectedIndex() {
@@ -543,7 +549,7 @@ export default class Dropdown extends PureComponent {
     let {
       renderBase,
       renderAccessory,
-      containerStyle,
+      searchContainerStyle,
       overlayStyle: overlayStyleOverrides,
       pickerStyle: pickerStyleOverrides,
 
@@ -598,7 +604,7 @@ export default class Dropdown extends PureComponent {
       <View
         onLayout={this.onLayout}
         ref={this.updateContainerRef}
-        style={containerStyle}>
+        style={searchContainerStyle}>
         <TouchableWithoutFeedback {...touchableProps}>
           <View pointerEvents="box-only">{this.renderBase(props)}</View>
         </TouchableWithoutFeedback>
